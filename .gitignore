@@ -6,3 +6,4 @@ env/
 paper/
 code/bug/
 code/temp_out/
+*.zip

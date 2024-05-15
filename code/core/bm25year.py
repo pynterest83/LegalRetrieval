@@ -124,30 +124,31 @@ def get_output(input_list, _index, client):
             json.dump(case_results, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
-    account = "elastic"
-    password = "SzkHkXYdJRcrKoUQVKLEsOfq"
-    client = login(account, password)
-    _index = "es_coliee_2024_year"
+    # account = "elastic"
+    # password = "GTJyNiTrrrce1BMpRmaNzI8A"
+    # client = login(account, password)
+    client = Elasticsearch(
+        "https://5655d24ec6bb479d87add3275fb05958.us-central1.gcp.cloud.es.io:443",
+        api_key="LVVqMEJvOEJZZllpYmExa0pnc3Q6ekRZcER2WDlSRmFEa01raVlZQ0hxUQ=="
+    )
+    _index = "coliee24"
     # client.indices.delete(index=_index, ignore=[400, 404])
     if not client.indices.exists(index=_index):
         mapping(client, _index)
     if client.indices.exists(index=_index):
         print("Index existed")
-        data_folder = "E:/personal/Code/Python/LegalRetrieval/data/longformer_out"
         
-        data_folder_year = "E:/personal/Code/Python/LegalRetrieval/data/year_data"
+        data_folder_year = "E:/personal/Code/Python/LegalRetrieval/data/new_data1"
         input_list = []
-        for file in os.listdir(data_folder):
+        for file in os.listdir(data_folder_year):
             #if file == "099980.json" or file == "000002.json" or file == "000028.json":
-            with open(os.path.join(data_folder, file), "r", encoding="utf-8") as f:
-                data = json.load(f)
-                with open(os.path.join(data_folder_year, file), "r", encoding="utf-8") as fil:
-                    d = json.load(fil)
-                    year = d["year"]
-                    #data = json.load(f)
-                    file_id = file.split(".")[0]
-                    paragraphs = data["paragraphs"]
-                    input_list.append({"id": file_id, "paragraphs": paragraphs, "year": year})
-                    print("Reading case " + file_id + " done!")
+            with open(os.path.join(data_folder_year, file), "r", encoding="utf-8") as f:
+                d = json.load(f)
+                year = d["year"]
+                #data = json.load(f)
+                file_id = file.split(".")[0]
+                paragraphs = d["paragraphs"]
+                input_list.append({"id": file_id, "paragraphs": paragraphs, "year": year})
+                print("Reading case " + file_id + " done!")
         indexing(client, _index, input_list)
         get_output(input_list, _index, client)
